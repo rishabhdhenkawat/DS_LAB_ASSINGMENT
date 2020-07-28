@@ -1,119 +1,76 @@
-#include <stdio.h>
-#include <stdlib.h>
 
-struct heap {
-	int size;
-	int count;
-	int *heaparr;
-};
+int tree_array_size = 11;
+int heap_size = 10;
 
-int *heap, size, count;
-int initial_size = 4;
-
-void heap_init(struct heap *h)
-{
-	h->count = 0;
-	h->size = initial_size;
-	h->heaparr = (int *) malloc(sizeof(int) * 4);
-	if(!h->heaparr) {
-		printf("Error allocatinga memory...\n");
-		exit(-1);
-	}
-
+void swap( int *a, int *b ) {
+  int t;
+  t = *a;
+  *a = *b;
+  *b = t;
 }
 
-void max_heapify(int *data, int loc, int count) {
-	int left, right, largest, temp;
-	left = 2*(loc) + 1;
-	right = left + 1;
-	largest = loc;
-	
-
-	if (left <= count && data[left] > data[largest]) {
-		largest = left;
-	} 
-	if (right <= count && data[right] > data[largest]) {
-		largest = right;
-	} 
-	
-	if(largest != loc) {
-		temp = data[loc];
-		data[loc] = data[largest];
-		data[largest] = temp;
-		max_heapify(data, largest, count);
-	}
-
+//function to get right child of a node of a tree
+int get_right_child(int A[], int index) {
+  if((((2*index)+1) < tree_array_size) && (index >= 1))
+    return (2*index)+1;
+  return -1;
 }
 
-void heap_push(struct heap *h, int value)
-{
-	int index, parent;
- 
-	// Resize the heap if it is too small to hold all the data
-	if (h->count == h->size)
-	{
-		h->size += 1;
-		h->heaparr = realloc(h->heaparr, sizeof(int) * h->size);
-		if (!h->heaparr) exit(-1); // Exit if the memory allocation fails
-	}
- 	
- 	index = h->count++; // First insert at last of array
-
- 	// Find out where to put the element and put it
-	for(;index; index = parent)
-	{
-		parent = (index - 1) / 2;
-		if (h->heaparr[parent] >= value) break;
-		h->heaparr[index] = h->heaparr[parent];
-	}
-	h->heaparr[index] = value;
+//function to get left child of a node of a tree
+int get_left_child(int A[], int index) {
+    if(((2*index) < tree_array_size) && (index >= 1))
+        return 2*index;
+    return -1;
 }
 
-void heap_display(struct heap *h) {
-	int i;
-	for(i=0; i<h->count; ++i) {
-		printf("|%d|", h->heaparr[i]);
-	}
-	printf("\n");
+//function to get the parent of a node of a tree
+int get_parent(int A[], int index) {
+  if ((index > 1) && (index < tree_array_size)) {
+    return index/2;
+  }
+  return -1;
 }
 
-int heap_delete(struct heap *h)
-{
-	int removed;
-	int temp = h->heaparr[--h->count];
- 	
-	
-	if ((h->count <= (h->size + 2)) && (h->size > initial_size))
-	{
-		h->size -= 1;
-		h->heaparr = realloc(h->heaparr, sizeof(int) * h->size);
-		if (!h->heaparr) exit(-1); // Exit if the memory allocation fails
-	}
- 	removed = h->heaparr[0];
- 	h->heaparr[0] = temp;
- 	max_heapify(h->heaparr, 0, h->count);
- 	return removed;
+void max_heapify(int A[], int index) {
+  int left_child_index = get_left_child(A, index);
+  int right_child_index = get_right_child(A, index);
+
+  // finding largest among index, left child and right child
+  int largest = index;
+
+  if ((left_child_index <= heap_size) && (left_child_index>0)) {
+    if (A[left_child_index] > A[largest]) {
+      largest = left_child_index;
+    }
+  }
+
+  if ((right_child_index <= heap_size && (right_child_index>0))) {
+    if (A[right_child_index] > A[largest]) {
+      largest = right_child_index;
+    }
+  }
+
+  // largest is not the node, node is not a heap
+  if (largest != index) {
+    swap(&A[index], &A[largest]);
+    max_heapify(A, largest);
+  }
 }
 
-
-int emptyPQ(struct heap *pq) {
-	int i;
-	while(pq->count != 0) {
-		printf("<<%d", heap_delete(pq));
-	}
+void build_max_heap(int A[]) {
+  int i;
+  for(i=heap_size/2; i>=1; i--) {
+    max_heapify(A, i);
+  }
 }
+
 int main() {
-	struct heap h;
-	heap_init(&h);
-	heap_push(&h,1);
-	heap_push(&h,5);
-	heap_push(&h,3);
-	heap_push(&h,7);
-	heap_push(&h,9);
-	heap_push(&h,8);
-	heap_display(&h);
-	heap_display(&h);
-	emptyPQ(&h);
-	return 0;
-
+  //tree is starting from index 1 and not 0
+  int A[] = {0, 15, 20, 7, 9, 5, 8, 6, 10, 2, 1};
+  build_max_heap(A);
+  int i;
+  for(i=1; i<=heap_size; i++) {
+    printf("%d\n",A[i]);
+  }
+  return 0;
 }
