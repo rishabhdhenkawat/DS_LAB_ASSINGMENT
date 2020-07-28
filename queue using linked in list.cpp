@@ -1,94 +1,103 @@
-#include <stdio.h>
-#include <stdlib.h>
+#include <bits/stdc++.h> 
+using namespace std; 
 
-typedef struct node {
-  int data;
-  struct node *next;
-}node;
+struct Queue { 
+	int front, rear, capacity; 
+	int* queue; 
+	Queue(int c) 
+	{ 
+		front = rear = 0; 
+		capacity = c; 
+		queue = new int; 
+	} 
 
-typedef struct linked_list {
-  struct node *head;
-  struct node *tail;
-}queue;
-
-//to make new node
-node* new_node(int data) {
-  node *z;
-  z = malloc(sizeof(struct node));
-  z->data = data;
-  z->next = NULL;
-
-  return z;
-}
-
-//to make a new queue
-queue* new_queue() {
-  queue *q = malloc(sizeof(queue));
-  q->head = NULL;
-  q->tail = NULL;
-
-  return q;
-}
-
-void traversal(queue *q) {
-  node *temp = q->head; //temporary pointer to point to head
-
-  while(temp != NULL) { //iterating over queue
-    printf("%d\t", temp->data);
-    temp = temp->next;
-  }
-
-  printf("\n");
-}
-
-int is_empty(queue *q) {
-  if(q->head == NULL)
-    return 1;
-  return 0;
-}
-
-void enqueue(queue *q, node *n) {
-  if(is_empty(q)) {
-    q->head = n;
-    q->tail = n;
-  }
-  else {
-    q->tail->next = n;
-    q->tail = n;
-  }
-}
-
-int dequeue(queue *q) {
-  if(is_empty(q)) {
-    printf("Underflow\n");
-    return -1000;
-  }
-  else {
-    int x = q->head->data;
-    node *temp = q->head;
-    q->head = q->head->next;
-    free(temp);
-    return x;
-  }
-}
-
-int main() {
-  queue *q = new_queue();
-
-  node *a, *b, *c;
-  a = new_node(10);
-  b = new_node(20);
-  c = new_node(30);
-
-  dequeue(q);
-  enqueue(q, a);
-  enqueue(q, b);
-  enqueue(q, c);
-
-  traversal(q);
-  dequeue(q);
-  traversal(q);
+	~Queue() { delete[] queue; } 
 
 
-  return 0;
-}
+	void queueEnqueue(int data) 
+	{ 
+		if (capacity == rear) { 
+			printf("\n full\n"); 
+			return; 
+		} 
+
+		else { 
+			queue[rear] = data; 
+			rear++; 
+		} 
+		return; 
+	} 
+
+
+	void queueDequeue() 
+	{ 
+		if (front == rear) { 
+			printf("\n empty\n"); 
+			return; 
+		} 
+
+		
+		else { 
+			for (int i = 0; i < rear - 1; i++) { 
+				queue[i] = queue[i + 1]; 
+			} 
+
+			rear--; 
+		} 
+		return; 
+	} 
+
+	void queueDisplay() 
+	{ 
+		int i; 
+		if (front == rear) { 
+			printf("\n Empty\n"); 
+			return; 
+		} 
+
+		for (i = front; i < rear; i++) { 
+			printf(" %d <-- ", queue[i]); 
+		} 
+		return; 
+	} 
+
+	void queueFront() 
+	{ 
+		if (front == rear) { 
+			printf("\n Empty\n"); 
+			return; 
+		} 
+		printf("\nFront is: %d", queue[front]); 
+		return; 
+	} 
+}; 
+
+int main(void) 
+{ 
+	Queue q(4); 
+
+	q.queueDisplay(); 
+
+	q.queueEnqueue(2); 
+	q.queueEnqueue(3); 
+	q.queueEnqueue(4); 
+	q.queueEnqueue(5); 
+
+	q.queueDisplay(); 
+
+	q.queueEnqueue(6); 
+
+	q.queueDisplay(); 
+
+	q.queueDequeue(); 
+	q.queueDequeue(); 
+
+	printf("\n\nafter two node deletion\n\n"); 
+
+	// print Queue elements 
+	q.queueDisplay(); 
+
+	q.queueFront(); 
+
+	return 0; 
+} 
