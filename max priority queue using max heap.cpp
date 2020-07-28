@@ -1,6 +1,8 @@
+#include <stdio.h>
 
-int tree_array_size = 11;
-int heap_size = 10;
+int tree_array_size = 20;
+int heap_size = 0;
+const int INF = 100000;
 
 void swap( int *a, int *b ) {
   int t;
@@ -64,13 +66,80 @@ void build_max_heap(int A[]) {
   }
 }
 
-int main() {
-  //tree is starting from index 1 and not 0
-  int A[] = {0, 15, 20, 7, 9, 5, 8, 6, 10, 2, 1};
-  build_max_heap(A);
+int maximum(int A[]) {
+  return A[1];
+}
+
+int extract_max(int A[]) {
+  int maxm = A[1];
+  A[1] = A[heap_size];
+  heap_size--;
+  max_heapify(A, 1);
+  return maxm;
+}
+
+void increase_key(int A[], int index, int key) {
+  A[index] = key;
+  while((index>1) && (A[get_parent(A, index)] < A[index])) {
+    swap(&A[index], &A[get_parent(A, index)]);
+    index = get_parent(A, index);
+  }
+}
+
+void decrease_key(int A[], int index, int key) {
+  A[index] = key;
+  max_heapify(A, index);
+}
+
+void insert(int A[], int key) {
+  heap_size++;
+  A[heap_size] = -1*INF;
+  increase_key(A, heap_size, key);
+}
+
+void print_heap(int A[]) {
   int i;
   for(i=1; i<=heap_size; i++) {
     printf("%d\n",A[i]);
   }
+  printf("\n");
+}
+
+int main() {
+  int A[tree_array_size];
+  insert(A, 20);
+  insert(A, 15);
+  insert(A, 8);
+  insert(A, 10);
+  insert(A, 5);
+  insert(A, 7);
+  insert(A, 6);
+  insert(A, 2);
+  insert(A, 9);
+  insert(A, 1);
+
+  print_heap(A);
+
+  increase_key(A, 5, 22);
+  print_heap(A);
+
+  decrease_key(A, 1, 13);
+  print_heap(A);
+
+  printf("%d\n\n", maximum(A));
+  printf("%d\n\n", extract_max(A));
+
+  print_heap(A);
+
+  printf("%d\n", extract_max(A));
+  printf("%d\n", extract_max(A));
+  printf("%d\n", extract_max(A));
+  printf("%d\n", extract_max(A));
+  printf("%d\n", extract_max(A));
+  printf("%d\n", extract_max(A));
+  printf("%d\n", extract_max(A));
+  printf("%d\n", extract_max(A));
+  printf("%d\n", extract_max(A));
   return 0;
 }
+	
