@@ -1,94 +1,107 @@
-#include <stdio.h>
-#include <stdlib.h>
 
-typedef struct queue {
-  int head;
-  int tail;
-  int size;
-  int Q[];
-}queue;
+#include <bits/stdc++.h> 
+using namespace std; 
 
-queue* new_queue(int size) {
-  queue *q = malloc(sizeof(queue) + size*sizeof(int));
+struct Queue { 
+	int front, rear, capacity; 
+	int* queue; 
+	Queue(int c) 
+	{ 
+		front = rear = 0; 
+		capacity = c; 
+		queue = new int; 
+	} 
 
-  q->head = 1;
-  q->tail = 1;
-  q->size = size;
+	~Queue() { delete[] queue; } 
 
-  return q;
-}
 
-int is_empty(queue *q) {
-  if(q->tail == q->head)
-    return 1;
-  return 0;
-}
+	void queueEnqueue(int data) 
+	{ 
+		if (capacity == rear) { 
+			printf("\n full\n"); 
+			return; 
+		} 
 
-int is_full(queue *q) {
-  if(q->head == q->tail+1)
-    return 1;
-  return 0;
-}
+	
+		else { 
+			queue[rear] = data; 
+			rear++; 
+		} 
+		return; 
+	} 
 
-void enqueue(queue *q, int x) {
-  if(is_full(q)) {
-    printf("Queue Overflow\n");
-  }
-  else {
-    q->Q[q->tail] = x;
-    if(q->tail == q->size)
-      q->tail = 1;
-    else
-      q->tail = q->tail+1;
-  }
-}
 
-int dequeue(queue *q) {
-  if(is_empty(q)) {
-    printf("Underflow\n");
-    return -1000;
-  }
-  else {
-    int x = q->Q[q->head];
-    if(q->head == q->size) {
-      q->head = 1;
-    }
-    else {
-      q->head = q->head+1;
-    }
-    return x;
-  }
-}
+	void queueDequeue() 
+	{ 
+		// if queue is empty 
+		if (front == rear) { 
+			printf("\nempty\n"); 
+			return; 
+		} 
 
-void display(queue *q) {
-  int i;
-  for(i=q->head; i<q->tail; i++) {
-    printf("%d\n",q->Q[i]);
-    if(i == q->size) {
-      i = 0;
-    }
-  }
-}
+		else { 
+			for (int i = 0; i < rear - 1; i++) { 
+				queue[i] = queue[i + 1]; 
+			} 
 
-int main() {
-  queue *q = new_queue(10);
-  enqueue(q, 10);
-  enqueue(q, 20);
-  enqueue(q, 30);
-  enqueue(q, 40);
-  enqueue(q, 50);
-  display(q);
+			rear--; 
+		} 
+		return; 
+	} 
 
-  printf("\n");
+	void queueDisplay() 
+	{ 
+		int i; 
+		if (front == rear) { 
+			printf("\n Empty\n"); 
+			return; 
+		} 
 
-  dequeue(q);
-  dequeue(q);
-  display(q);
+		for (i = front; i < rear; i++) { 
+			printf(" %d - ", queue[i]); 
+		} 
+		return; 
+	} 
 
-  printf("\n");
+	void queueFront() 
+	{ 
+		if (front == rear) { 
+			printf("\n Empty\n"); 
+			return; 
+		} 
+		printf("\nFront : %d", queue[front]); 
+		return; 
+	} 
+}; 
 
-  enqueue(q, 60);
-  enqueue(q, 70);
-  display(q);
-  return 0;
-}
+int main(void) 
+{ 
+	Queue q(4); 
+
+
+	q.queueDisplay(); 
+
+	q.queueEnqueue(20); 
+	q.queueEnqueue(30); 
+	q.queueEnqueue(40); 
+	q.queueEnqueue(50); 
+
+	q.queueDisplay(); 
+
+	q.queueEnqueue(60); 
+
+
+	q.queueDisplay(); 
+
+	q.queueDequeue(); 
+	q.queueDequeue(); 
+
+	printf("\n\nafter two node deletion\n\n"); 
+
+	q.queueDisplay(); 
+
+
+	q.queueFront(); 
+
+	return 0; 
+} 
